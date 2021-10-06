@@ -6,10 +6,6 @@ required_providers {
       source = "hashicorp/azurerm"
       version = ">=2.78.0"
     }
-   azuread = {
-      source = "hashicorp/azuread"
-      version = ">=2.5.0"
-    }
   }
 }
 
@@ -20,9 +16,7 @@ provider "azurerm" {
   client_secret   = var.client_secret
   tenant_id       = var.tenant_id
 }
-provider "azuread" {
-    tenant_id       = var.tenant_id
-}
+
 resource "azurerm_resource_group" "vault-rg" {
   name     = "${var.prefix}-vault-rg"
   location = var.location
