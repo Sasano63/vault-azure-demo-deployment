@@ -53,7 +53,7 @@ resource "azurerm_key_vault" "vault" {
 
 # hashicorp vault will use this azurerm_key_vault_key to wrap/encrypt its master key.
 resource "azurerm_key_vault_key" "vault-key" {
-  depends_on   = [azurerm_key_vault.keyvault]
+  depends_on   = [azurerm_key_vault.vault]
   name         = "${var.prefix}-key"
   key_vault_id = azurerm_key_vault.vault.id
   key_type     = "RSA"
