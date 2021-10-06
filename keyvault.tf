@@ -6,7 +6,7 @@ data "azurerm_client_config" "current" {
 }
 
 resource "azurerm_key_vault" "vault" {
-  name                = "${var.prefix}-vault-${random_id.keyvault.hex}"
+  name                = "${var.prefix}-vault-keyvault"
   location            = azurerm_resource_group.vault-rg.location
   resource_group_name = azurerm_resource_group.vault-rg.name
   tenant_id           = var.tenant_id
