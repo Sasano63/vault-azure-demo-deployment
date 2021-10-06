@@ -13,6 +13,8 @@ unzip -o /tmp/$${VAULT_ZIP} -d /usr/local/bin/
 chmod 0755 /usr/local/bin/vault
 chown azureuser:azureuser /usr/local/bin/vault
 mkdir -pm 0755 /etc/vault.d
+sudo echo "${license}" > /etc/vault.d/license.hclic
+
 mkdir -pm 0755 /opt/vault
 chown azureuser:azureuser /opt/vault
 
@@ -54,6 +56,7 @@ seal "azurekeyvault" {
 }
 ui=true
 disable_mlock = true
+license_path = "/etc/vault.d/license.hclic"
 EOF
 
 
@@ -67,8 +70,8 @@ export VAULT_ADDR=http://127.0.0.1:8200
 export VAULT_SKIP_VERIFY=true
 EOF
 
-systemctl enable vault
-systemctl start vault
+sudo systemctl enable vault
+sudo systemctl start vault
 
 
 
