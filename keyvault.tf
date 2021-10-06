@@ -5,10 +5,6 @@ resource "random_id" "keyvault" {
 data "azurerm_client_config" "current" {
 }
 
-data "azuread_service_principal" "vault" {
-  application_id = var.client_id
-}
-
 resource "azurerm_key_vault" "vault" {
   name                = "${var.prefix}-vault-${random_id.keyvault.hex}"
   location            = azurerm_resource_group.vault-rg.location
@@ -28,11 +24,17 @@ resource "azurerm_key_vault" "vault" {
 
   # access policy for the hashicorp vault service principal.
   access_policy {
-    tenant_id = var.tenant_id
-    object_id = data.azuread_service_principal.vault.object_id
+        tenant_id = data.azurerm_client_config.current.tenant_id
+
+    #object_id = var.object_id
+    object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
       "get",
+      "list",
+      "create",
+      "delete",
+      "update",
       "wrapKey",
       "unwrapKey",
     ]
