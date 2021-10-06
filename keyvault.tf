@@ -9,12 +9,13 @@ resource "azurerm_key_vault" "vault" {
   name                = "${var.prefix}-vault-keyvault"
   location            = azurerm_resource_group.vault-rg.location
   resource_group_name = azurerm_resource_group.vault-rg.name
-  tenant_id           = var.tenant_id
+  tenant_id                   = data.azurerm_client_config.current.tenant_id
 
   # enable virtual machines to access this key vault.
   # NB this identity is used in the example /tmp/azure_auth.sh file.
   #    vault is actually using the vault service principal.
   enabled_for_deployment = true
+    enabled_for_disk_encryption = true
 
   sku_name = "standard"
 
@@ -40,19 +41,7 @@ resource "azurerm_key_vault" "vault" {
     ]
   }
 
-  # access policy for the user that is currently running terraform.
-  access_policy {
-    tenant_id = var.tenant_id
-    object_id = data.azurerm_client_config.current.object_id
-
-    key_permissions = [
-      "get",
-      "list",
-      "create",
-      "delete",
-      "update",
-    ]
-  }
+  
 
   # TODO does this really need to be so broad? can it be limited to the vault vm?
   network_acls {
@@ -64,14 +53,19 @@ resource "azurerm_key_vault" "vault" {
 
 # hashicorp vault will use this azurerm_key_vault_key to wrap/encrypt its master key.
 resource "azurerm_key_vault_key" "vault-key" {
-  name         = var.key_name
+  depends_on   = [azurerm_key_vault.keyvault]
+  name         = "${var.prefix}-key"
   key_vault_id = azurerm_key_vault.vault.id
   key_type     = "RSA"
   key_size     = 2048
 
   key_opts = [
-    "wrapKey",
+    "decrypt",
+    "encrypt",
+    "sign",
     "unwrapKey",
+    "verify",
+    "wrapKey",
   ]
 }
 
