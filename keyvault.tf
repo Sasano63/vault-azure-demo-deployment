@@ -38,6 +38,7 @@ resource "azurerm_key_vault" "vault" {
       "update",
       "wrapKey",
       "unwrapKey",
+      "purge",
     ]
   }
 
